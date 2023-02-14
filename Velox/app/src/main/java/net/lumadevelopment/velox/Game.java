@@ -22,6 +22,11 @@ public class Game {
     private final Velox main;
 
     /**
+     * Records audio and gets answers from user.
+     */
+    private final SpeechManager speechMgr;
+
+    /**
      * The Timer that runs the update() TimerTask.
      * Stored so we can cancel() and purge() it when we kill()
      * a Game object.
@@ -90,6 +95,7 @@ public class Game {
         this.ready = false;
 
         this.main = main;
+        this.speechMgr = new SpeechManager(main, this);
         this.timer = new Timer();
         this.numOfProblems = Config.NUM_OF_PROBLEMS;
         this.problems = new Problem[numOfProblems];
@@ -159,6 +165,20 @@ public class Game {
         });
 
         Log.d(LOG_TAG, "Problem UI successfully initialized!");
+
+        // Get the speech manager to start listening
+        speechMgr.run();
+
+        if (!speechMgr.isReady()) {
+
+            // If there was an issue with speech manager that caused it to not
+            // start properly:
+
+            ready = false;
+            Log.e(LOG_TAG, SpeechManager.LOG_TAG + " is not ready! Halting!");
+            return;
+
+        }
 
         gameStart = System.currentTimeMillis();
         thisProblemStarted = System.currentTimeMillis();
@@ -305,7 +325,8 @@ public class Game {
 
         timer.cancel();
         timer.purge();
-        // TODO kill inference process
+
+        speechMgr.kill();
 
     }
 

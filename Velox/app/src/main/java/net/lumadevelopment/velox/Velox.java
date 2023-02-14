@@ -29,14 +29,19 @@ public class Velox extends AppCompatActivity {
 
     public Velox() {
 
+        // Instantiate request permission launcher
         requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
 
             if (isGranted) {
 
+                // If we have the desired permission, launch countdown
+                Log.d(LOG_TAG, "Launching countdown from request permission launcher!");
                 countdown();
 
             } else {
 
+                // If the user declines to grant the permission, launch permission denied dialog.
+                Log.d(LOG_TAG, "Launching permission denied dialog from request permission launcher!");
                 showPermissionDeniedDialog();
 
             }

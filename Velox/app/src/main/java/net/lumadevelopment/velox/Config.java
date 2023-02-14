@@ -1,5 +1,7 @@
 package net.lumadevelopment.velox;
 
+import java.util.Locale;
+
 public class Config {
 
     // Numeric variables
@@ -23,5 +25,8 @@ public class Config {
     public static final String PERMISSION_DENIED_MSG = "Use of the microphone is necessary for " +
             Velox.class.getSimpleName() + " to work! The game cannot launch until microphone " +
             "permissions are granted.";
+
+    // Speech Recognition Settings
+    public static final Locale LOCALE = Locale.US;
 
 }
