@@ -1,7 +1,6 @@
 package net.lumadevelopment.velox;
 
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -14,9 +13,9 @@ public class GameOver {
     public static final String LOG_TAG = GameOver.class.getSimpleName();
 
     // Passed in from Game
-    private Velox main;
-    private boolean[] correctlyAnswered;
-    private long gameStart;
+    private final Velox main;
+    private final boolean[] correctlyAnswered;
+    private final long gameStart;
 
     // UI elements
     private TextView gameTime;

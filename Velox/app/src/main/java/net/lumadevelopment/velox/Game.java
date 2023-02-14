@@ -19,19 +19,19 @@ public class Game {
      * We use the Velox class to access the UI thread and
      * UI elements.
      */
-    private Velox main;
+    private final Velox main;
 
     /**
      * The Timer that runs the update() TimerTask.
      * Stored so we can cancel() and purge() it when we kill()
      * a Game object.
      */
-    private Timer timer;
+    private final Timer timer;
 
     /**
      * Assigned to Config.NUM_OF_PROBLEMS
      */
-    private int numOfProblems;
+    private final int numOfProblems;
 
     /**
      * Array of problems the game will use. Generated
@@ -39,7 +39,7 @@ public class Game {
      *
      * size = numOfProblems
      */
-    private Problem[] problems;
+    private final Problem[] problems;
 
     /**
      * Array of booleans, each one corresponding to a
@@ -48,7 +48,7 @@ public class Game {
      *
      * size = numOfProblems
      */
-    private boolean[] correctlyAnswered;
+    private final boolean[] correctlyAnswered;
 
     /**
      * Whether init() has ran successfully or not. Necessary

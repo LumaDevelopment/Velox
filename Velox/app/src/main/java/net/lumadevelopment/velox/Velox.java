@@ -1,7 +1,13 @@
 package net.lumadevelopment.velox;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
+import android.app.AlertDialog;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -19,6 +25,26 @@ public class Velox extends AppCompatActivity {
 
     public static final String LOG_TAG = Velox.class.getSimpleName();
 
+    private final ActivityResultLauncher<String> requestPermissionLauncher;
+
+    public Velox() {
+
+        requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+
+            if (isGranted) {
+
+                countdown();
+
+            } else {
+
+                showPermissionDeniedDialog();
+
+            }
+
+        });
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -30,9 +56,39 @@ public class Velox extends AppCompatActivity {
         button.setOnClickListener(view -> {
 
             Log.d(LOG_TAG, "Go button pressed!");
-            countdown();
+            permissionLayer();
 
         });
+
+    }
+
+    /**
+     * Check for appropriate permission before moving on to countdown.
+     */
+    public void permissionLayer() {
+
+        Log.d(LOG_TAG, "Entering permissions layer...");
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+
+            // If we already have the permission
+            Log.d(LOG_TAG, "We have permission to use the microphone, passing on to countdown!");
+            countdown();
+
+        } else if (shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)) {
+
+            // If we should explain to the user why we need the permission
+            Log.d(LOG_TAG, "Calling permission request dialog from permission layer!");
+            showPermissionRequestDialog();
+
+        } else {
+
+            // If we can simply ask for the permission
+            Log.d(LOG_TAG, "Request permission directly from permission layer!");
+            requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO);
+
+        }
 
     }
 
@@ -73,7 +129,7 @@ public class Velox extends AppCompatActivity {
 
             // Having the make a countdownNumber variable twice hurts my soul,
             // but it works out best this way.
-            TextView countdownNumber = findViewById(R.id.countdownNum);
+            final TextView countdownNumber = findViewById(R.id.countdownNum);
 
             @Override
             public void run() {
@@ -109,6 +165,70 @@ public class Velox extends AppCompatActivity {
 
         // Initialize Game object while countdown is running
         new Thread(() -> game.init()).start();
+
+    }
+
+    /**
+     * Creates and shows a dialog to the user that explains what
+     * we need microphone permission for, and gives the user the
+     * option to either grant the microphone permission or to
+     * deny us the microphone permission.
+     */
+    public void showPermissionRequestDialog() {
+
+        Log.d(LOG_TAG, "Launching permission request dialog!");
+
+        AlertDialog.Builder permRequestDialog = new AlertDialog.Builder(this);
+
+        permRequestDialog.setMessage(Config.PERMISSION_REQUEST_MSG).setTitle(Config.PERMISSION_REQUEST_TITLE);
+
+        permRequestDialog.setPositiveButton("OK", (dialogInterface, i) -> {
+
+            Log.d(LOG_TAG, "Request permission from permission request dialog!");
+            requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO);
+
+        });
+
+        permRequestDialog.setNegativeButton("Cancel", (dialogInterface, i) -> {
+
+            Log.d(LOG_TAG, "Permission request dialog cancelled, calling permission denied dialog.");
+            showPermissionDeniedDialog();
+
+        });
+
+        permRequestDialog.create().show();
+
+        Log.d(LOG_TAG, "Permission request dialog shown!");
+
+    }
+
+    /**
+     * Creates and shows a dialog to the user that explains
+     * that the app cannot work without the microphone
+     * permission. The dialog gives the user the option
+     * to either enable the microphone permission or to
+     * just deny it.
+     */
+    public void showPermissionDeniedDialog() {
+
+        Log.d(LOG_TAG, "Launching permission denied dialog.");
+
+        AlertDialog.Builder permDeniedDialog = new AlertDialog.Builder(this);
+
+        permDeniedDialog.setMessage(Config.PERMISSION_DENIED_MSG).setTitle(Config.PERMISSION_DENIED_TITLE);
+
+        permDeniedDialog.setPositiveButton("Give", (dialogInterface, i) -> {
+
+            Log.d(LOG_TAG, "Calling permission request dialog from permission denied dialog.");
+            showPermissionRequestDialog();
+
+        });
+
+        permDeniedDialog.setNegativeButton("Cancel", (dialogInterface, i) -> Log.d(LOG_TAG, "Permission denied dialog closed."));
+
+        permDeniedDialog.create().show();
+
+        Log.d(LOG_TAG, "Permission denied dialog shown.");
 
     }
 

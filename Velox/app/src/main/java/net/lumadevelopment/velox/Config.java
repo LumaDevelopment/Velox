@@ -13,4 +13,15 @@ public class Config {
     public static final String GAME_TIME_TEXT_PREFIX = "Game Time: ";
     public static final String SCORE_TEXT_PREFIX = "Score: ";
 
+    // Permission text variables
+    public static final String PERMISSION_REQUEST_TITLE = "Microphone Permissions";
+    public static final String PERMISSION_REQUEST_MSG = Velox.class.getSimpleName() + " needs " +
+            "permission to use your microphone to hear your answer. If you're alright with that, " +
+            "press 'OK' to enable microphone permissions.";
+
+    public static final String PERMISSION_DENIED_TITLE = "Missing Required Permissions";
+    public static final String PERMISSION_DENIED_MSG = "Use of the microphone is necessary for " +
+            Velox.class.getSimpleName() + " to work! The game cannot launch until microphone " +
+            "permissions are granted.";
+
 }
