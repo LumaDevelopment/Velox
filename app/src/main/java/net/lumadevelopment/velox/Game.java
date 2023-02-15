@@ -112,7 +112,7 @@ public class Game {
     public void init() {
 
         Log.d(LOG_TAG, "init() called in " + LOG_TAG);
-        long startTime = System.currentTimeMillis();
+        long startTime = System.nanoTime();
 
         ProblemGenerator generator = new ProblemGenerator();
 
@@ -130,10 +130,10 @@ public class Game {
         // Let the Velox class know that run() can be called
         ready = true;
 
-        long endTime =  System.currentTimeMillis();
+        long endTime = System.nanoTime();
         long initializationTime = endTime - startTime;
 
-        Log.d(LOG_TAG, LOG_TAG + " initialized in " + initializationTime + " ms.");
+        Log.d(LOG_TAG, LOG_TAG + " initialized in " + initializationTime + " ns.");
 
     }
 

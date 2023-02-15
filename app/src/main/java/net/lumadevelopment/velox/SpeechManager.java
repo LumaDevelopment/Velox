@@ -3,6 +3,8 @@ package net.lumadevelopment.velox;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
@@ -64,7 +66,7 @@ public class SpeechManager implements RecognitionListener {
         this.ready = false;
         this.main = main;
         this.game = game;
-        this.numberWords = new HashMap<>();
+        numberWords = new HashMap<>();
 
         init();
 
@@ -303,9 +305,25 @@ public class SpeechManager implements RecognitionListener {
      * one Game to start a new one.
      */
     public void kill() {
-        ready = false;
-        recognizer.cancel();
-        recognizer.destroy();
+
+        // We can only interact with SpeechRecognizer on the main thread,
+        // and this method is typically run by a TimerTask, so we need to
+        // run SpeechRecognizer destruction from the main looper.
+        // https://stackoverflow.com/questions/11123621/running-code-in-main-thread-from-another-thread
+        Handler mainHandler = new Handler(Looper.getMainLooper());
+
+        mainHandler.post(() -> {
+
+            ready = false;
+
+            if (recognizer != null) {
+                recognizer.destroy();
+            }
+
+            recognizer = null;
+
+        });
+
     }
 
     // I don't use these methods, but they're required by the interface.

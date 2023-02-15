@@ -169,7 +169,7 @@ public class Velox extends AppCompatActivity {
         }, 1000, 1000);
 
         // Initialize Game object while countdown is running
-        new Thread(() -> game.init()).start();
+        new Thread(game::init).start();
 
     }
 
